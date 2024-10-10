@@ -1,56 +1,58 @@
 <template>
-  <a-layout class="h-screen">
-    <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
-      <div class="w-[50%] font-bold text-lg text-white mx-auto my-3">Travel Now</div>
-      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
-        <RouterLink to="/explore">
-          <a-menu-item key="1">
-            <compass-outlined />
-            <span>Explore</span>
-          </a-menu-item>
-        </RouterLink>
-        <RouterLink to="/savings">
-          <a-menu-item key="2">
-            <book-outlined />
-            <span>Savings</span>
-          </a-menu-item>
-        </RouterLink>
-        <RouterLink to="/searching">
-          <a-menu-item key="3">
-            <search-outlined />
-            <span>Searching</span>
-          </a-menu-item>
-        </RouterLink>
-      </a-menu>
-    </a-layout-sider>
-    <a-layout>
-      <a-layout-header
-        style="background: #fff; padding-left: 2rem"
-        class="flex items-center justify-between"
-      >
-        <menu-unfold-outlined
-          v-if="collapsed"
-          class="trigger"
-          @click="() => (collapsed = !collapsed)"
-        />
-        <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
-        <div>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </div>
-      </a-layout-header>
-      <a-layout-content
-        :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
-        class="overflow-auto"
-      >
-        <RouterView />
-      </a-layout-content>
+  <a-app>
+    <a-layout class="h-screen">
+      <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
+        <div class="w-[50%] font-bold text-lg text-white mx-auto my-3">Travel Now</div>
+        <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
+          <RouterLink to="/explore">
+            <a-menu-item key="1">
+              <compass-outlined />
+              <span>Explore</span>
+            </a-menu-item>
+          </RouterLink>
+          <RouterLink to="/savings">
+            <a-menu-item key="2">
+              <book-outlined />
+              <span>Savings</span>
+            </a-menu-item>
+          </RouterLink>
+          <RouterLink to="/searching">
+            <a-menu-item key="3">
+              <search-outlined />
+              <span>Searching</span>
+            </a-menu-item>
+          </RouterLink>
+        </a-menu>
+      </a-layout-sider>
+      <a-layout>
+        <a-layout-header
+          style="background: #fff; padding-left: 2rem"
+          class="flex items-center justify-between"
+        >
+          <menu-unfold-outlined
+            v-if="collapsed"
+            class="trigger"
+            @click="() => (collapsed = !collapsed)"
+          />
+          <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
+          <div>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
+        </a-layout-header>
+        <a-layout-content
+          :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
+          class="overflow-auto"
+        >
+          <RouterView />
+        </a-layout-content>
+      </a-layout>
     </a-layout>
-  </a-layout>
+  </a-app>
 </template>
 <script lang="ts" setup>
 import { ref, computed } from 'vue'

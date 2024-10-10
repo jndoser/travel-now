@@ -44,9 +44,11 @@ import { reactive, ref, toRaw } from 'vue'
 import type { UnwrapRef } from 'vue'
 import type { Rule } from 'ant-design-vue/es/form'
 import { UploadOutlined } from '@ant-design/icons-vue'
-import type { UploadProps } from 'ant-design-vue'
+import { App, type UploadProps } from 'ant-design-vue'
 import { useUser } from 'vue-clerk'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { useRoomCreator, type RoomCreateDataType } from '@/stores/roomCreator'
 
 // const fileList = ref<UploadProps['fileList']>([
 //   {
@@ -74,6 +76,8 @@ interface FormState {
   imageUrls: UploadProps['fileList']
 }
 const { user } = useUser()
+const { message } = App.useApp()
+const router = useRouter()
 
 const formRef = ref()
 const labelCol = { span: 5 }
@@ -86,6 +90,14 @@ const formState: UnwrapRef<FormState> = reactive({
   price: 0,
   imageUrls: []
 })
+
+interface CreateRoomViewProps {
+  clickNextHandler: () => void
+}
+
+const createRoomData = defineProps<CreateRoomViewProps>()
+const { setRoomData } = useRoomCreator()
+
 // const rules: Record<string, Rule[]> = {
 //   name: [
 //     { required: true, message: 'Please input Activity name', trigger: 'change' },
@@ -108,8 +120,6 @@ const onSubmit = () => {
   formRef.value
     .validate()
     .then(async () => {
-      console.log('values', formState, toRaw(formState))
-      console.log('user: ', user.value?.id)
       const images = formState.imageUrls?.map((file: any) => file.response.responseData[0].url)
 
       const newRoom = {
@@ -120,10 +130,17 @@ const onSubmit = () => {
         price: formState.price,
         imageUrls: images,
         ownerId: user.value?.id
-      }
+      } as RoomCreateDataType
 
-      const res = await axios.post('http://localhost:8000/api/room', newRoom)
-      console.log(res)
+      setRoomData(newRoom)
+
+      // const res = await axios.post('http://localhost:8000/api/room', newRoom)
+      // if (res.status === 201) {
+      //   message.success('Create room successfully!')
+      //   router.push('/explore')
+      // }
+      // move to amenities selector
+      createRoomData.clickNextHandler()
     })
     .catch((error: any) => {
       console.log('error', error)
