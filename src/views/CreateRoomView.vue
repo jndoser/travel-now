@@ -33,14 +33,13 @@
       </a-form-item>
 
       <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click="onSubmit">Create</a-button>
         <a-button style="margin-left: 10px" @click="resetForm">Reset</a-button>
       </a-form-item>
     </a-form>
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, toRaw } from 'vue'
+import { onMounted, reactive, ref, toRaw } from 'vue'
 import type { UnwrapRef } from 'vue'
 import type { Rule } from 'ant-design-vue/es/form'
 import { UploadOutlined } from '@ant-design/icons-vue'
@@ -91,11 +90,6 @@ const formState: UnwrapRef<FormState> = reactive({
   imageUrls: []
 })
 
-interface CreateRoomViewProps {
-  clickNextHandler: () => void
-}
-
-const createRoomData = defineProps<CreateRoomViewProps>()
 const { setRoomData } = useRoomCreator()
 
 // const rules: Record<string, Rule[]> = {
@@ -116,7 +110,7 @@ const { setRoomData } = useRoomCreator()
 //   resource: [{ required: true, message: 'Please select activity resource', trigger: 'change' }],
 //   desc: [{ required: true, message: 'Please input activity form', trigger: 'blur' }]
 // }
-const onSubmit = () => {
+const submitFormData = () => {
   formRef.value
     .validate()
     .then(async () => {
@@ -133,14 +127,6 @@ const onSubmit = () => {
       } as RoomCreateDataType
 
       setRoomData(newRoom)
-
-      // const res = await axios.post('http://localhost:8000/api/room', newRoom)
-      // if (res.status === 201) {
-      //   message.success('Create room successfully!')
-      //   router.push('/explore')
-      // }
-      // move to amenities selector
-      createRoomData.clickNextHandler()
     })
     .catch((error: any) => {
       console.log('error', error)
@@ -151,8 +137,9 @@ const resetForm = () => {
 }
 const handleRemoveFile = async (file: any) => {
   const deleteFilePublicId = file.response.responseData[0].public_id
-  const res = await axios.delete(
+  await axios.delete(
     `http://localhost:8000/api/images/upload/${deleteFilePublicId.replace('vue-travel-now/', '')}`
   )
 }
+defineExpose({ submitFormData })
 </script>

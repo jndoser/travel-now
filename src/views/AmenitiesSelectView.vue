@@ -18,15 +18,14 @@ import { onMounted } from 'vue'
 import { useRoomCreator } from '../stores/roomCreator'
 import { storeToRefs } from 'pinia'
 
-const { fetchAmenitiesData } = useRoomCreator()
+const { fetchAmenitiesData, updateAmenitiesStatus } = useRoomCreator()
 const { amenitiesStatus, roomData } = storeToRefs(useRoomCreator())
 
 onMounted(() => {
   fetchAmenitiesData()
 })
-console.log('roomData: ', roomData.value)
 
 const handleChange = (title: string, checked: boolean) => {
-  console.log(title, checked)
+  updateAmenitiesStatus(title, checked)
 }
 </script>

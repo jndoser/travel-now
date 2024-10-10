@@ -39,8 +39,6 @@ export const useRoomCreator = defineStore('roomCreator', () => {
     roomData.price = roomDataInput.price
     roomData.imageUrls = roomDataInput.imageUrls
     roomData.ownerId = roomDataInput.ownerId
-
-    console.log('setRoomData: ', roomData)
   }
 
   async function fetchAmenitiesData() {

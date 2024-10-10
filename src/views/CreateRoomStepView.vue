@@ -5,9 +5,10 @@
       <component
         :is="steps[current].component"
         v-if="current === 0"
-        :clickNextHandler="next"
+        ref="createFormRef"
+        :key="'createRoom'"
       ></component>
-      <component v-else :is="steps[current].component"></component>
+      <component :is="steps[current].component" v-else :key="current"></component>
     </div>
     <div class="steps-action">
       <a-button v-if="current < steps.length - 1" type="primary" @click="next">Next</a-button>
@@ -23,13 +24,44 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { message } from 'ant-design-vue'
 import CreateRoomView from './CreateRoomView.vue'
 import AmenitiesSelectView from './AmenitiesSelectView.vue'
+import { storeToRefs } from 'pinia'
+import { useRoomCreator, type AmenitiesStatusDataType } from '@/stores/roomCreator'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+interface CreateFormComponentInstance {
+  submitFormData: () => void
+}
 
 const current = ref<number>(0)
-const next = () => {
+const createFormRef = ref<CreateFormComponentInstance | null>(null)
+const { amenitiesStatus, roomData } = storeToRefs(useRoomCreator())
+const router = useRouter()
+
+const next = async () => {
+  if (current.value === 0 && createFormRef.value) {
+    createFormRef.value.submitFormData() // Try to trigger the form submission
+  }
+  if (current.value === 1) {
+    const serviceIds = amenitiesStatus.value
+      .filter((amenity: AmenitiesStatusDataType) => amenity.checked === true)
+      .map((amenity: AmenitiesStatusDataType) => amenity.id)
+
+    const newRoom = {
+      ...roomData.value,
+      serviceIds
+    }
+
+    const res = await axios.post('http://localhost:8000/api/room', newRoom)
+    if (res.status === 201) {
+      message.success('Create room successfully!')
+    }
+  }
+
   current.value++
 }
 const prev = () => {
