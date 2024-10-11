@@ -54,7 +54,7 @@ interface RoomDataType {
 }
 
 const router = useRoute()
-const id = router.params.id
+const id = router.params.id as string
 const roomData = ref<RoomDataType>({
   imagesData: [],
   title: '',
@@ -69,7 +69,7 @@ const roomData = ref<RoomDataType>({
 })
 
 const getDetailRoom = async (roomId: string) => {
-  const res = await axios.get('http://localhost:8000/api/room/66fcf5c1931a6b7afb58d962')
+  const res = await axios.get(`http://localhost:8000/api/room/${roomId}`)
 
   roomData.value = {
     imagesData: res.data.imageUrls,
@@ -96,6 +96,6 @@ const getDetailRoom = async (roomId: string) => {
 }
 
 onMounted(() => {
-  getDetailRoom('')
+  getDetailRoom(id)
 })
 </script>
