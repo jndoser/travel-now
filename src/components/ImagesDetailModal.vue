@@ -42,8 +42,6 @@ const imagesDetailData = defineProps<ImagesDetailModalProps>()
 
 const imagesToDisplay = computed(() => formatImageData(imagesDetailData.imageUrls))
 
-console.log('imagesToDisplay: ', imagesToDisplay.value)
-
 const showModal = () => {
   open.value = true
 }

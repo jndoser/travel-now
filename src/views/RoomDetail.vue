@@ -23,7 +23,7 @@
     <ServiceOfferList :services="roomData.services" />
     <RatingReport :averageRate="roomData.ratingReportData.averageRate" />
     <a-divider />
-    <RoomFeedbacks :feedbacks="roomData.feedbacksInfo" />
+    <RoomFeedbacks :roomId="roomData.id" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -33,12 +33,12 @@ import ImageGallery from '@/components/ImageGallery.vue'
 import HostAchievement from '@/components/HostAchievement.vue'
 import ServiceOfferList from '@/components/ServiceOfferList.vue'
 import RatingReport from '@/components/RatingReport.vue'
-import RoomFeedbacks, { type FeedbacksProps } from '@/components/RoomFeedbacks.vue'
+import RoomFeedbacks from '@/components/RoomFeedbacks.vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
-import type { FeedbackProps } from '@/components/Feedback.vue'
 
 interface RoomDataType {
+  id: string
   imagesData: string[]
   title: string
   capacity: number
@@ -50,12 +50,12 @@ interface RoomDataType {
   ratingReportData: {
     averageRate: 0
   }
-  feedbacksInfo: FeedbackProps[]
 }
 
 const router = useRoute()
 const id = router.params.id as string
 const roomData = ref<RoomDataType>({
+  id: '',
   imagesData: [],
   title: '',
   capacity: 0,
@@ -64,14 +64,14 @@ const roomData = ref<RoomDataType>({
   services: [],
   ratingReportData: {
     averageRate: 0
-  },
-  feedbacksInfo: []
+  }
 })
 
 const getDetailRoom = async (roomId: string) => {
   const res = await axios.get(`http://localhost:8000/api/room/${roomId}`)
 
   roomData.value = {
+    id: res.data.id,
     imagesData: res.data.imageUrls,
     title: res.data.title,
     capacity: res.data.capacity,
@@ -86,12 +86,7 @@ const getDetailRoom = async (roomId: string) => {
           ? res.data.feedback.map((f: any) => f.rating).reduce((a: number, b: number) => a + b, 0) /
             res.data.feedback.length
           : 0
-    },
-    feedbacksInfo: res.data.feedback.map((f: any) => ({
-      authorFullName: `${f.author.firstName} ${f.author.lastName}`,
-      description: f.comment,
-      createdDate: f.createdAt
-    }))
+    }
   } as RoomDataType
 }
 
