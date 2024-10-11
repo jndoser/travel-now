@@ -1,5 +1,5 @@
 <template>
-  <a-card hoverable style="width: 300px" class="mr-3" @click="clickRoomCardHandler">
+  <a-card hoverable style="width: 300px" class="mr-3 mt-4" @click="clickRoomCardHandler">
     <template #cover>
       <a-carousel arrows>
         <template #prevArrow>

@@ -32,6 +32,7 @@ import { storeToRefs } from 'pinia'
 import { useRoomCreator, type AmenitiesStatusDataType } from '@/stores/roomCreator'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import CreateRoomResultView from './CreateRoomResultView.vue'
 
 interface CreateFormComponentInstance {
   submitFormData: () => void
@@ -79,7 +80,7 @@ const steps = [
   },
   {
     title: 'Done',
-    component: 'Last-content'
+    component: CreateRoomResultView
   }
 ]
 const items = steps.map((item) => ({ key: item.title, title: item.title }))

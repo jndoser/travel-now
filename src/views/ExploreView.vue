@@ -1,6 +1,6 @@
 <template>
-  <a-row :gutter="[18, 18]">
-    <a-col v-for="item in roomData" :key="item.toString()" :span="8">
+  <a-list :grid="{ gutter: 18, column: 3 }" :pagination="pagination" :data-source="roomData">
+    <template #renderItem="{ item }">
       <RoomCard
         :id="item.id"
         :title="item.title"
@@ -11,21 +11,33 @@
         :price="item.price"
         :imageUrls="item.imageUrls"
       />
-    </a-col>
-  </a-row>
+    </template>
+  </a-list>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import RoomCard, { type RoomCardProps } from '../components/RoomCard.vue'
 import axios from 'axios'
 
 const roomData = ref<RoomCardProps[]>()
+const totalRoomCount = ref<number>()
+const currentPage = ref<number>(1)
 
-const loadRoomData = async () => {
-  const res = await axios.get('http://localhost:8000/api/room')
+const pagination = computed(() => ({
+  onChange: (page: number) => {
+    currentPage.value = page
+    loadRoomData(page) // Load new page data when page changes
+  },
+  pageSize: 6,
+  total: totalRoomCount.value,
+  current: currentPage.value
+}))
+
+const loadRoomData = async (page: number) => {
+  const res = await axios.get(`http://localhost:8000/api/room?page=${page}&limit=6`)
   roomData.value =
-    res.data.length > 0
-      ? res.data.map(
+    res.data.rooms.length > 0
+      ? res.data.rooms.map(
           (room: any) =>
             ({
               id: room.id,
@@ -47,9 +59,11 @@ const loadRoomData = async () => {
             }) as RoomCardProps
         )
       : []
+
+  totalRoomCount.value = res.data.total
 }
 
 onMounted(() => {
-  loadRoomData()
+  loadRoomData(1)
 })
 </script>
