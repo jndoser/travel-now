@@ -5,15 +5,30 @@
       <a-col v-for="(service, index) in services.services" :key="index" :span="12">
         <div>{{ service }}</div>
       </a-col>
-      <a-col :span="12">col-12</a-col>
     </a-row>
-    <a-button shape="round" size="large" class="w-60 mt-3 mb-4"> Show all amenities </a-button>
+    <AmenitiesDetailModal ref="amenitiesModalRef" :amenityNames="services.services" />
+    <a-button @click="showAmenitiesModal" shape="round" size="large" class="w-60 mt-3 mb-4">
+      Show all amenities
+    </a-button>
   </div>
 </template>
 <script lang="ts" setup>
+import { ref } from 'vue'
+import AmenitiesDetailModal from './AmenitiesDetailModal.vue'
 interface ServiceOfferListProps {
   services: string[]
 }
 
+interface AmenitiesDetailModalInstance {
+  showModal: () => void
+}
+
 const services = defineProps<ServiceOfferListProps>()
+const amenitiesModalRef = ref<AmenitiesDetailModalInstance | null>(null)
+
+const showAmenitiesModal = () => {
+  if (amenitiesModalRef.value) {
+    amenitiesModalRef.value.showModal()
+  }
+}
 </script>
