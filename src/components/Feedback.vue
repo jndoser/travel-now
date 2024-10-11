@@ -37,6 +37,7 @@
       <a-avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
     </template>
     <template #content>
+      <a-rate disabled :value="feedbackInfo.rating" />
       <p>
         {{ feedbackInfo.description }}
       </p>
@@ -63,6 +64,7 @@ export interface FeedbackProps {
   authorFullName: string
   description: string
   createdDate: string
+  rating: number
 }
 
 const feedbackInfo = defineProps<FeedbackProps>()

@@ -1,15 +1,20 @@
 <template>
   <div class="flex flex-col gap-4">
-    <a-input-group compact>
-      <a-input v-model:value="commentInput" style="width: calc(70% - 200px)" />
-      <a-button type="primary" @click="onComment">Submit</a-button>
-    </a-input-group>
+    <div class="flex flex-col gap3">
+      <div class="font-bold">Leave your feedback:</div>
+      <a-rate v-model:value="ratingInput" class="mb-2" />
+      <a-input-group compact>
+        <a-input v-model:value="commentInput" style="width: calc(70% - 200px)" />
+        <a-button type="primary" @click="onComment">Submit</a-button>
+      </a-input-group>
+    </div>
     <a-list :grid="{ gutter: 18, column: 2 }" :pagination="pagination" :data-source="feedbacksInfo">
       <template #renderItem="{ item }">
         <Feedback
           :authorFullName="item.authorFullName"
           :description="item.description"
           :createdDate="item.createdDate"
+          :rating="item.rating"
         />
       </template>
     </a-list>
@@ -31,6 +36,7 @@ const feedbacksInfo = ref<FeedbackProps[]>()
 const totalFeedbacksCount = ref<number>()
 const currentPage = ref<number>(1)
 const commentInput = ref<string>('')
+const ratingInput = ref<number>(5)
 const { user } = useUser()
 
 const pagination = computed(() => ({
@@ -50,6 +56,7 @@ const loadFeedbacks = async (page: number) => {
   feedbacksInfo.value = res.data.feedbacks.map((f: any) => ({
     authorFullName: `${f.author.firstName} ${f.author.lastName}`,
     description: f.comment,
+    rating: f.rating,
     createdDate: f.createdAt
   }))
 
@@ -60,7 +67,7 @@ const onComment = async () => {
   const commentInfo = {
     roomId: roomFeedbacksData.roomId,
     clerkId: user.value?.id,
-    rating: 5,
+    rating: ratingInput.value,
     comment: commentInput.value
   }
 
