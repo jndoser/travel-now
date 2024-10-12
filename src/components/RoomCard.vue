@@ -18,7 +18,17 @@
       </a-carousel>
       <div class="absolute top-0" @click.stop>
         <div class="rounded-2xl m-2 p-2 bg-white text-black w-fit">Super Hot</div>
-        <heart-two-tone class="absolute right-2 top-1 text-2xl" twoToneColor="#eb2f96" />
+        <heart-filled
+          @click="clickHeartHandler"
+          v-if="isSavedRoom"
+          class="absolute right-2 top-1 text-2xl text-red-500"
+        />
+        <heart-two-tone
+          v-else
+          @click="clickHeartHandler"
+          class="absolute right-2 top-1 text-2xl"
+          twoToneColor="#eb2f96"
+        />
       </div>
     </template>
     <a-card-meta>
@@ -49,8 +59,12 @@ import {
   LeftCircleOutlined,
   RightCircleOutlined,
   HeartTwoTone,
-  StarFilled
+  StarFilled,
+  HeartFilled
 } from '@ant-design/icons-vue'
+import axios from 'axios'
+import { onMounted, ref } from 'vue'
+import { useUser } from 'vue-clerk'
 import { useRouter } from 'vue-router'
 
 export interface RoomCardProps {
@@ -62,16 +76,38 @@ export interface RoomCardProps {
   numberOfFeedbacks: number
   price: number
   imageUrls: string[]
+  isSaved: boolean
 }
 
-const { id, title, description, address, rating, numberOfFeedbacks, price, imageUrls } =
+const isSavedRoom = ref<boolean>(false)
+
+const { id, title, description, address, rating, numberOfFeedbacks, price, imageUrls, isSaved } =
   defineProps<RoomCardProps>()
 
 const router = useRouter()
+const { user } = useUser()
 
 const clickRoomCardHandler = () => {
   router.push(`/room/${id}`)
 }
+
+const clickHeartHandler = async () => {
+  let res
+  if (!isSavedRoom.value) {
+    res = await axios.put(`http://localhost:8000/api/room/save/${id}`, { clerkId: user.value?.id })
+  } else {
+    res = await axios.put(`http://localhost:8000/api/room/unsave/${id}`, {
+      clerkId: user.value?.id
+    })
+  }
+  if (res.status === 200) {
+    isSavedRoom.value = !isSavedRoom.value
+  }
+}
+
+onMounted(() => {
+  isSavedRoom.value = isSaved
+})
 </script>
 <style scoped>
 :deep(.slick-slide) {

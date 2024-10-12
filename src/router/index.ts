@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ExploreView from '@/views/ExploreView.vue'
 import RoomDetail from '@/views/RoomDetail.vue'
-import CreateRoomView from '@/views/CreateRoomView.vue'
 import CreateRoomStepView from '@/views/CreateRoomStepView.vue'
 
 const router = createRouter({

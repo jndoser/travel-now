@@ -6,7 +6,20 @@
         <a-button :icon="h(ShareAltOutlined)" class="flex items-center justify-center"
           >Share</a-button
         >
-        <a-button :icon="h(HeartOutlined)" class="flex items-center justify-center">Save</a-button>
+        <a-button
+          v-if="roomData.isSaved"
+          :icon="h(HeartFilled)"
+          class="flex items-center justify-center"
+          @click="clickSaveHandler"
+          >Save</a-button
+        >
+        <a-button
+          v-else
+          :icon="h(HeartOutlined)"
+          class="flex items-center justify-center"
+          @click="clickSaveHandler"
+          >Save</a-button
+        >
       </div>
     </div>
     <ImageGallery :imagesData="roomData.imagesData" />
@@ -28,7 +41,7 @@
 </template>
 <script lang="ts" setup>
 import { h, onMounted, ref } from 'vue'
-import { ShareAltOutlined, HeartOutlined } from '@ant-design/icons-vue'
+import { ShareAltOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons-vue'
 import ImageGallery from '@/components/ImageGallery.vue'
 import HostAchievement from '@/components/HostAchievement.vue'
 import ServiceOfferList from '@/components/ServiceOfferList.vue'
@@ -36,6 +49,7 @@ import RatingReport from '@/components/RatingReport.vue'
 import RoomFeedbacks from '@/components/RoomFeedbacks.vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import { useUser } from 'vue-clerk'
 
 interface RoomDataType {
   id: string
@@ -50,9 +64,12 @@ interface RoomDataType {
   ratingReportData: {
     averageRate: 0
   }
+  isSaved: boolean
 }
 
 const router = useRoute()
+const { user } = useUser()
+
 const id = router.params.id as string
 const roomData = ref<RoomDataType>({
   id: '',
@@ -64,7 +81,8 @@ const roomData = ref<RoomDataType>({
   services: [],
   ratingReportData: {
     averageRate: 0
-  }
+  },
+  isSaved: false
 })
 
 const getDetailRoom = async (roomId: string) => {
@@ -86,8 +104,25 @@ const getDetailRoom = async (roomId: string) => {
           ? res.data.feedback.map((f: any) => f.rating).reduce((a: number, b: number) => a + b, 0) /
             res.data.feedback.length
           : 0
-    }
+    },
+    isSaved:
+      res.data.savedUsers.filter((savedUser: any) => savedUser.clerkId === user.value?.id).length >
+      0
   } as RoomDataType
+}
+
+const clickSaveHandler = async () => {
+  let res
+  if (!roomData.value.isSaved) {
+    res = await axios.put(`http://localhost:8000/api/room/save/${id}`, { clerkId: user.value?.id })
+  } else {
+    res = await axios.put(`http://localhost:8000/api/room/unsave/${id}`, {
+      clerkId: user.value?.id
+    })
+  }
+  if (res.status === 200) {
+    roomData.value.isSaved = !roomData.value.isSaved
+  }
 }
 
 onMounted(() => {

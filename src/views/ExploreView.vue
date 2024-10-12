@@ -10,6 +10,7 @@
         :numberOfFeedbacks="item.numberOfFeedbacks"
         :price="item.price"
         :imageUrls="item.imageUrls"
+        :isSaved="item.isSaved"
       />
     </template>
   </a-list>
@@ -18,10 +19,12 @@
 import { computed, onMounted, ref } from 'vue'
 import RoomCard, { type RoomCardProps } from '../components/RoomCard.vue'
 import axios from 'axios'
+import { useUser } from 'vue-clerk'
 
 const roomData = ref<RoomCardProps[]>()
 const totalRoomCount = ref<number>()
 const currentPage = ref<number>(1)
+const { user } = useUser()
 
 const pagination = computed(() => ({
   onChange: (page: number) => {
@@ -55,7 +58,10 @@ const loadRoomData = async (page: number) => {
                   : 0,
               numberOfFeedbacks: room.feedback.length,
               price: room.price,
-              imageUrls: room.imageUrls
+              imageUrls: room.imageUrls,
+              isSaved:
+                room.savedUsers.filter((savedUser: any) => savedUser.clerkId === user.value?.id)
+                  .length > 0
             }) as RoomCardProps
         )
       : []
