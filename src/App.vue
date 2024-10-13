@@ -16,10 +16,16 @@
               <span>Savings</span>
             </a-menu-item>
           </RouterLink>
-          <RouterLink to="/searching">
+          <RouterLink to="/booking-history">
             <a-menu-item key="3">
               <search-outlined />
-              <span>Searching</span>
+              <span>Booking History</span>
+            </a-menu-item>
+          </RouterLink>
+          <RouterLink to="/room/create" v-if="isOwner">
+            <a-menu-item key="4">
+              <form-outlined />
+              <span>Manage room</span>
             </a-menu-item>
           </RouterLink>
         </a-menu>
@@ -55,18 +61,32 @@
   </a-app>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import {
   CompassOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   BookOutlined,
-  SearchOutlined
+  SearchOutlined,
+  FormOutlined
 } from '@ant-design/icons-vue'
 import { useRoute } from 'vue-router'
-import { SignedIn, SignedOut, SignInButton, UserButton } from 'vue-clerk'
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from 'vue-clerk'
+import axios from 'axios'
 
 const router = useRoute()
+const { user } = useUser()
+const isOwner = ref<boolean>(false)
+
+watch(
+  () => user.value?.id,
+  async (newIdValue) => {
+    if (newIdValue) {
+      const res = await axios.get(`http://localhost:8000/api/user/${newIdValue}`)
+      isOwner.value = res.data.role === 'owner'
+    }
+  }
+)
 
 const selectedKeys = computed(() => {
   switch (router.path) {
@@ -74,8 +94,10 @@ const selectedKeys = computed(() => {
       return ['1']
     case '/savings':
       return ['2']
-    case '/searching':
+    case '/booking-history':
       return ['3']
+    case '/room/create':
+      return ['4']
     default:
       return ['1']
   }
