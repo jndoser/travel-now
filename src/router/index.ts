@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import ExploreView from '@/views/ExploreView.vue'
 import RoomDetail from '@/views/RoomDetail.vue'
 import CreateRoomStepView from '@/views/CreateRoomStepView.vue'
+import SavedRoomsView from '@/views/SavedRoomsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
+    },
+    {
+      path: '/savings',
+      name: 'savings',
+      component: SavedRoomsView
     }
   ]
 })
