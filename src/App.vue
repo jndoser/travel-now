@@ -22,7 +22,7 @@
               <span>Booking History</span>
             </a-menu-item>
           </RouterLink>
-          <RouterLink to="/room/create" v-if="isOwner">
+          <RouterLink to="/room-manager" v-if="isOwner">
             <a-menu-item key="4">
               <form-outlined />
               <span>Manage room</span>
@@ -96,7 +96,7 @@ const selectedKeys = computed(() => {
       return ['2']
     case '/booking-history':
       return ['3']
-    case '/room/create':
+    case '/room-manager':
       return ['4']
     default:
       return ['1']

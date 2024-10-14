@@ -17,7 +17,7 @@
         </div>
       </a-carousel>
       <div class="absolute top-0" @click.stop>
-        <div class="rounded-2xl m-2 p-2 bg-white text-black w-fit">Super Hot</div>
+        <div v-if="status" class="rounded-2xl m-2 p-2 bg-white text-black w-fit">{{ status }}</div>
         <heart-filled
           @click="clickHeartHandler"
           v-if="isSavedRoom"
@@ -77,12 +77,23 @@ export interface RoomCardProps {
   price: number
   imageUrls: string[]
   isSaved: boolean
+  status?: string
 }
 
 const isSavedRoom = ref<boolean>(false)
 
-const { id, title, description, address, rating, numberOfFeedbacks, price, imageUrls, isSaved } =
-  defineProps<RoomCardProps>()
+const {
+  id,
+  title,
+  description,
+  address,
+  rating,
+  numberOfFeedbacks,
+  price,
+  imageUrls,
+  isSaved,
+  status
+} = defineProps<RoomCardProps>()
 
 const router = useRouter()
 const { user } = useUser()
