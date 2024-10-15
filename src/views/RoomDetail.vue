@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex items-center justify-between">
-      <div class="font-semibold text-2xl">Cozy condo with stunning view</div>
+      <div class="font-semibold text-2xl">{{ roomData.title }}</div>
       <div class="flex gap-4 justify-center items-center">
         <a-button :icon="h(ShareAltOutlined)" class="flex items-center justify-center"
           >Share</a-button

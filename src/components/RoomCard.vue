@@ -16,7 +16,14 @@
           <img alt="example" :src="imageUrl" class="w-[100%]" />
         </div>
       </a-carousel>
-      <div class="absolute top-0" @click.stop>
+      <div v-if="isEditable" class="absolute top-0" @click.stop>
+        <div v-if="status" class="rounded-2xl m-2 p-2 bg-white text-black w-fit">{{ status }}</div>
+        <edit-outlined
+          @click="clickEditHandler"
+          class="absolute right-2 top-1 text-2xl bg-white rounded-full size-10"
+        />
+      </div>
+      <div v-else class="absolute top-0" @click.stop>
         <div v-if="status" class="rounded-2xl m-2 p-2 bg-white text-black w-fit">{{ status }}</div>
         <heart-filled
           @click="clickHeartHandler"
@@ -60,7 +67,8 @@ import {
   RightCircleOutlined,
   HeartTwoTone,
   StarFilled,
-  HeartFilled
+  HeartFilled,
+  EditOutlined
 } from '@ant-design/icons-vue'
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
@@ -78,6 +86,7 @@ export interface RoomCardProps {
   imageUrls: string[]
   isSaved: boolean
   status?: string
+  isEditable?: boolean
 }
 
 const isSavedRoom = ref<boolean>(false)
@@ -92,7 +101,8 @@ const {
   price,
   imageUrls,
   isSaved,
-  status
+  status,
+  isEditable
 } = defineProps<RoomCardProps>()
 
 const router = useRouter()
@@ -114,6 +124,10 @@ const clickHeartHandler = async () => {
   if (res.status === 200) {
     isSavedRoom.value = !isSavedRoom.value
   }
+}
+
+const clickEditHandler = () => {
+  router.push(`/room/edit/${id}`)
 }
 
 onMounted(() => {

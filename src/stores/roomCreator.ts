@@ -59,6 +59,33 @@ export const useRoomCreator = defineStore('roomCreator', () => {
     })
   }
 
+  async function setCurrentRoomData(roomId: string) {
+    const res = await axios.get(`http://localhost:8000/api/room/${roomId}`)
+    roomData.title = res.data.title
+    roomData.description = res.data.description
+    roomData.address = res.data.address
+    roomData.capacity = res.data.capacity
+    roomData.price = res.data.price
+    roomData.imageUrls = res.data.imageUrls
+    roomData.ownerId = res.data.ownerId
+
+    const selectedAmenities = res.data.services.map((service: any) => service.id)
+
+    const resAmenities = await axios.get('http://localhost:8000/api/services')
+    amenitiesStatus.value = resAmenities.data.map((service: any) => ({
+      id: service.id,
+      title: service.title,
+      checked: false
+    })) as AmenitiesStatusDataType[]
+
+    amenitiesStatus.value = amenitiesStatus.value.map((amenity: AmenitiesStatusDataType) => {
+      if (selectedAmenities.includes(amenity.id)) {
+        amenity.checked = true
+      }
+      return amenity
+    })
+  }
+
   function resetRoomData() {
     roomData.title = ''
     roomData.description = ''
@@ -75,6 +102,7 @@ export const useRoomCreator = defineStore('roomCreator', () => {
     setRoomData,
     resetRoomData,
     fetchAmenitiesData,
-    updateAmenitiesStatus
+    updateAmenitiesStatus,
+    setCurrentRoomData
   }
 })

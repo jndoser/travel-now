@@ -5,6 +5,7 @@ import RoomDetail from '@/views/RoomDetail.vue'
 import CreateRoomStepView from '@/views/CreateRoomStepView.vue'
 import SavedRoomsView from '@/views/SavedRoomsView.vue'
 import RoomManagerView from '@/views/RoomManagerView.vue'
+import EditRoomView from '@/views/EditRoomView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +47,11 @@ const router = createRouter({
       path: '/room-manager',
       name: 'roomManager',
       component: RoomManagerView
+    },
+    {
+      path: '/room/edit/:roomId',
+      name: 'room-edit',
+      component: EditRoomView
     }
   ]
 })

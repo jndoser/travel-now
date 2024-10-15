@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-5 items-center justify-center">
-    <div class="font-bold text-2xl">Create new room</div>
+    <div class="font-bold text-2xl">Edit room</div>
     <a-form
       ref="formRef"
       :model="formState"
@@ -37,23 +37,48 @@
           </a-button>
         </a-upload>
       </a-form-item>
-
-      <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button style="margin-left: 10px" @click="resetForm">Reset</a-button>
+      <a-form-item label="Amenities" name="amenities">
+        <a-space :size="[10, 10]" wrap>
+          <a-checkable-tag
+            v-for="amenity in amenitiesStatus"
+            :key="amenity.title"
+            v-model:checked="amenity.checked"
+            @change="(checked: boolean) => handleChange(amenity.title, checked)"
+          >
+            {{ amenity.title }}
+          </a-checkable-tag>
+        </a-space>
       </a-form-item>
     </a-form>
+    <a-button
+      @click="handleUpdateRoom"
+      type="primary"
+      :size="'large'"
+      class="flex items-center justify-center"
+    >
+      <template #icon>
+        <EditOutlined />
+      </template>
+      Update room
+    </a-button>
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, reactive, ref, toRaw } from 'vue'
+import { EditOutlined } from '@ant-design/icons-vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import type { UnwrapRef } from 'vue'
 import type { Rule } from 'ant-design-vue/es/form'
 import { UploadOutlined } from '@ant-design/icons-vue'
 import { App, type UploadProps } from 'ant-design-vue'
 import { useUser } from 'vue-clerk'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
-import { useRoomCreator, type RoomCreateDataType } from '@/stores/roomCreator'
+import { useRoute, useRouter } from 'vue-router'
+import {
+  useRoomCreator,
+  type AmenitiesStatusDataType,
+  type RoomCreateDataType
+} from '@/stores/roomCreator'
+import { storeToRefs } from 'pinia'
 
 // const fileList = ref<UploadProps['fileList']>([
 //   {
@@ -83,6 +108,9 @@ interface FormState {
 const { user } = useUser()
 const { message } = App.useApp()
 const router = useRouter()
+const route = useRoute()
+
+const roomId = route.params.roomId as string
 
 const formRef = ref()
 const labelCol = { span: 5 }
@@ -96,7 +124,9 @@ const formState: UnwrapRef<FormState> = reactive({
   imageUrls: []
 })
 
-const { setRoomData } = useRoomCreator()
+const { setRoomData, setCurrentRoomData, updateAmenitiesStatus } = useRoomCreator()
+
+const { amenitiesStatus, roomData } = storeToRefs(useRoomCreator())
 
 // const rules: Record<string, Rule[]> = {
 //   name: [
@@ -116,36 +146,53 @@ const { setRoomData } = useRoomCreator()
 //   resource: [{ required: true, message: 'Please select activity resource', trigger: 'change' }],
 //   desc: [{ required: true, message: 'Please input activity form', trigger: 'blur' }]
 // }
-const submitFormData = () => {
-  formRef.value
-    .validate()
-    .then(async () => {
-      const images = formState.imageUrls?.map((file: any) => file.response.responseData[0].url)
 
-      const newRoom = {
-        title: formState.title,
-        description: formState.description,
-        address: formState.address,
-        capacity: formState.capacity,
-        price: formState.price,
-        imageUrls: images,
-        ownerId: user.value?.id
-      } as RoomCreateDataType
+const handleChange = (title: string, checked: boolean) => {
+  updateAmenitiesStatus(title, checked)
+}
 
-      setRoomData(newRoom)
-    })
-    .catch((error: any) => {
-      console.log('error', error)
-    })
-}
-const resetForm = () => {
-  formRef.value.resetFields()
-}
 const handleRemoveFile = async (file: any) => {
   const deleteFilePublicId = file.response.responseData[0].public_id
   await axios.delete(
     `http://localhost:8000/api/images/upload/${deleteFilePublicId.replace('vue-travel-now/', '')}`
   )
 }
-defineExpose({ submitFormData })
+
+const handleUpdateRoom = async () => {
+  const newAmenities = amenitiesStatus.value
+    .filter((amenity: AmenitiesStatusDataType) => amenity.checked === true)
+    .map((amenity: AmenitiesStatusDataType) => amenity.id)
+  const newRoomData = {
+    title: formState.title,
+    description: formState.description,
+    address: formState.address,
+    capacity: formState.capacity,
+    price: formState.price,
+    imageUrls: formState.imageUrls,
+    serviceIDs: newAmenities
+  }
+
+  const res = await axios.put(`http://localhost:8000/api/room/${roomId}`, newRoomData)
+  if (res.status === 200) {
+    message.success('Update successfully!')
+    router.push('/room-manager')
+  }
+}
+
+onMounted(async () => {
+  await setCurrentRoomData(roomId)
+})
+
+watch(
+  roomData,
+  (newRoomData) => {
+    console.log('watch triggered for roomData:', newRoomData)
+    formState.title = newRoomData.title
+    formState.description = newRoomData.description
+    formState.address = newRoomData.address
+    formState.capacity = newRoomData.capacity
+    formState.price = newRoomData.price
+  },
+  { immediate: true, deep: true }
+)
 </script>

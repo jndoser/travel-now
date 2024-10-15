@@ -1,6 +1,14 @@
 <template>
   <div class="flex flex-col gap-4 items-center justify-center">
     <div class="text-2xl font-bold">Room Manager</div>
+    <RouterLink to="/room/create" class="self-start">
+      <a-button type="primary" :size="'large'" class="flex items-center justify-center">
+        <template #icon>
+          <PlusCircleOutlined />
+        </template>
+        Create new room
+      </a-button>
+    </RouterLink>
     <a-list :grid="{ gutter: 18, column: 3 }" :pagination="pagination" :data-source="roomData">
       <template #renderItem="{ item }">
         <RoomCard
@@ -14,16 +22,19 @@
           :imageUrls="item.imageUrls"
           :isSaved="item.isSaved"
           :status="item.status"
+          :isEditable="true"
         />
       </template>
     </a-list>
   </div>
 </template>
 <script setup lang="ts">
+import { PlusCircleOutlined } from '@ant-design/icons-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import RoomCard, { type RoomCardProps } from '../components/RoomCard.vue'
 import axios from 'axios'
 import { useUser } from 'vue-clerk'
+import { RouterLink } from 'vue-router'
 
 const roomData = ref<RoomCardProps[]>()
 const totalRoomCount = ref<number>()
