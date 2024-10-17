@@ -37,7 +37,9 @@ const pagination = computed(() => ({
 }))
 
 const loadRoomData = async (page: number) => {
-  const res = await axios.get(`http://localhost:8000/api/room?page=${page}&limit=6`)
+  const res = await axios.get(
+    `http://localhost:8000/api/room?page=${page}&limit=6&status=in%20progress`
+  )
   roomData.value =
     res.data.rooms.length > 0
       ? res.data.rooms.map(

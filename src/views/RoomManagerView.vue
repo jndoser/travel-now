@@ -55,7 +55,7 @@ const loadSavedRoomData = async (page: number) => {
   if (!user.value?.id) return
 
   const res = await axios.get(
-    `http://localhost:8000/api/room?page=${page}&limit=6&clerkId=${user.value?.id}`
+    `http://localhost:8000/api/room?page=${page}&limit=6&clerkId=${user.value?.id}&status=in%20progress`
   )
   roomData.value =
     res.data.rooms.length > 0
