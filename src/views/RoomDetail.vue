@@ -27,7 +27,13 @@
       <div class="text-xl font-semibold">{{ roomData.title }}</div>
       <div>{{ roomData.capacity }} guests</div>
     </div>
-    <HostAchievement :hostFullName="roomData.hostInfo.fullName" />
+    <div class="flex gap-5 items-center justify-between">
+      <HostAchievement :hostFullName="roomData.hostInfo.fullName" />
+      <BookingRoomModal ref="bookingRoomModalRef" :roomId="roomData.id" />
+      <a-button type="primary" shape="round" size="large" @click="showBookingRoomModal"
+        >Book this room</a-button
+      >
+    </div>
     <a-typography-paragraph
       :ellipsis="{ rows: 2, expandable: true, symbol: 'more' }"
       :content="roomData.description"
@@ -50,6 +56,7 @@ import RoomFeedbacks from '@/components/RoomFeedbacks.vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useUser } from 'vue-clerk'
+import BookingRoomModal from '@/components/BookingRoomModal.vue'
 
 interface RoomDataType {
   id: string
@@ -65,6 +72,18 @@ interface RoomDataType {
     averageRate: 0
   }
   isSaved: boolean
+}
+
+interface BookingRoomModalInstance {
+  showModal: () => void
+}
+
+const bookingRoomModalRef = ref<BookingRoomModalInstance | null>(null)
+
+const showBookingRoomModal = () => {
+  if (bookingRoomModalRef.value) {
+    bookingRoomModalRef.value.showModal()
+  }
 }
 
 const router = useRoute()

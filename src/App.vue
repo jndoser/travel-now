@@ -2,7 +2,11 @@
   <a-app>
     <a-layout class="h-screen">
       <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
-        <div class="w-[50%] font-bold text-lg text-white mx-auto my-3">Travel Now</div>
+        <RouterLink to="/">
+          <div class="w-[50%] font-bold text-lg text-white mx-auto my-3 cursor-pointer">
+            Travel Now
+          </div>
+        </RouterLink>
         <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
           <RouterLink to="/explore">
             <a-menu-item key="1">

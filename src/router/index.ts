@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import ExploreView from '@/views/ExploreView.vue'
 import RoomDetail from '@/views/RoomDetail.vue'
 import CreateRoomStepView from '@/views/CreateRoomStepView.vue'
@@ -7,6 +6,7 @@ import SavedRoomsView from '@/views/SavedRoomsView.vue'
 import RoomManagerView from '@/views/RoomManagerView.vue'
 import EditRoomView from '@/views/EditRoomView.vue'
 import AdminRoomManagerView from '@/views/AdminRoomManagerView.vue'
+import BookedHistoryView from '@/views/BookedHistoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +14,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: ExploreView
     },
     {
       path: '/explore',
@@ -58,6 +58,11 @@ const router = createRouter({
       path: '/admin/room-manager',
       name: 'adminRoomManager',
       component: AdminRoomManagerView
+    },
+    {
+      path: '/booking-history',
+      name: 'bookingHistory',
+      component: BookedHistoryView
     }
   ]
 })
