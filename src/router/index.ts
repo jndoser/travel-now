@@ -7,6 +7,7 @@ import RoomManagerView from '@/views/RoomManagerView.vue'
 import EditRoomView from '@/views/EditRoomView.vue'
 import AdminRoomManagerView from '@/views/AdminRoomManagerView.vue'
 import BookedHistoryView from '@/views/BookedHistoryView.vue'
+import BookedRoomInfoView from '@/views/BookedRoomInfoView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,11 @@ const router = createRouter({
       path: '/booking-history',
       name: 'bookingHistory',
       component: BookedHistoryView
+    },
+    {
+      path: '/booking-info/:bookingId',
+      name: 'bookingInfo',
+      component: BookedRoomInfoView
     }
   ]
 })
