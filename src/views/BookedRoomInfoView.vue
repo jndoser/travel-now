@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4">
-    <div class="text-2xl font-bold text-center">Admin Room Manager</div>
+    <div class="text-2xl font-bold text-center">Booked Room Manager</div>
     <a-radio-group v-model:value="selectedRoomStatus">
       <a-radio-button value="Pending">Pending Review</a-radio-button>
       <a-radio-button value="Approved">Approved</a-radio-button>

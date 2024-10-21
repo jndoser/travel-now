@@ -18,10 +18,16 @@
       </a-carousel>
       <div v-if="isEditable" class="absolute top-0" @click.stop>
         <div v-if="status" class="rounded-2xl m-2 p-2 bg-white text-black w-fit">{{ status }}</div>
-        <edit-outlined
-          @click="clickEditHandler"
-          class="absolute right-2 top-1 text-2xl bg-white rounded-full size-10"
-        />
+        <div class="absolute right-2 top-1 flex gap-3">
+          <edit-outlined
+            @click="clickEditHandler"
+            class="text-2xl bg-gray-200 rounded-full size-10"
+          />
+          <book-outlined
+            @click="clickBookedManager"
+            class="text-2xl bg-gray-200 rounded-full size-10"
+          />
+        </div>
       </div>
       <div v-else class="absolute top-0" @click.stop>
         <div v-if="status" class="rounded-2xl m-2 p-2 bg-white text-black w-fit">{{ status }}</div>
@@ -68,7 +74,8 @@ import {
   HeartTwoTone,
   StarFilled,
   HeartFilled,
-  EditOutlined
+  EditOutlined,
+  BookOutlined
 } from '@ant-design/icons-vue'
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
@@ -128,6 +135,10 @@ const clickHeartHandler = async () => {
 
 const clickEditHandler = () => {
   router.push(`/room/edit/${id}`)
+}
+
+const clickBookedManager = () => {
+  router.push(`/booking-info/${id}`)
 }
 
 onMounted(() => {
