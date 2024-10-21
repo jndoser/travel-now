@@ -32,6 +32,12 @@
               <span>Manage room</span>
             </a-menu-item>
           </RouterLink>
+          <RouterLink to="/admin/room-manager" v-if="isAdmin">
+            <a-menu-item key="5">
+              <FileDoneOutlined />
+              <span>Review room</span>
+            </a-menu-item>
+          </RouterLink>
         </a-menu>
       </a-layout-sider>
       <a-layout>
@@ -72,7 +78,8 @@ import {
   MenuFoldOutlined,
   BookOutlined,
   SearchOutlined,
-  FormOutlined
+  FormOutlined,
+  FileDoneOutlined
 } from '@ant-design/icons-vue'
 import { useRoute } from 'vue-router'
 import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from 'vue-clerk'
@@ -81,6 +88,7 @@ import axios from 'axios'
 const router = useRoute()
 const { user } = useUser()
 const isOwner = ref<boolean>(false)
+const isAdmin = ref<boolean>(false)
 
 watch(
   () => user.value?.id,
@@ -88,6 +96,7 @@ watch(
     if (newIdValue) {
       const res = await axios.get(`http://localhost:8000/api/user/${newIdValue}`)
       isOwner.value = res.data.role === 'owner'
+      isAdmin.value = res.data.role === 'admin'
     }
   }
 )
@@ -102,6 +111,8 @@ const selectedKeys = computed(() => {
       return ['3']
     case '/room-manager':
       return ['4']
+    case '/admin/room-manager':
+      return ['5']
     default:
       return ['1']
   }
